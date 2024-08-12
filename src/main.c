@@ -24,8 +24,8 @@
 #include <rmw_microros/rmw_microros.h>
 #include <microros_transports.h>
 
-#define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){printf("Failed status on line %d: %d. Aborting.\n",__LINE__,(int)temp_rc);for(;;){};}}
-#define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){printf("Failed status on line %d: %d. Continuing.\n",__LINE__,(int)temp_rc);}}
+#define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){printk("Failed status on line %d: %d. Aborting.\n",__LINE__,(int)temp_rc);for(;;){k_msleep(100);};}}
+#define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){printk("Failed status on line %d: %d. Continuing.\n",__LINE__,(int)temp_rc);}}
 
 rcl_publisher_t publisher;
 std_msgs__msg__Int32 msg;
@@ -41,6 +41,9 @@ void timer_callback(rcl_timer_t * timer, int64_t last_call_time)
 
 void main(void)
 {
+	extern int wifi_conn(void);
+	wifi_conn();
+	
 	rmw_uros_set_custom_transport(
 		MICRO_ROS_FRAMING_REQUIRED,
 		(void *) &default_params,
